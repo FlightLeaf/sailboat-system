@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -255,6 +257,15 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),// This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          ProcessResult result = await Process.run('RTMS.exe', ['arg1', 'arg2']);
+        },
+        backgroundColor: Colors.lightBlue,
+        child: Icon(Icons.sailing),
+        tooltip: '实时监测系统',
+      ),
     );
+
   }
 }

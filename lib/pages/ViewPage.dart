@@ -34,7 +34,7 @@ class _ViewState extends State<ViewPage> {
   void initState() {
     super.initState();
     // 在 initState 中打开数据库
-    database = sqlite.sqlite3.open('../sailboat.sqlite');
+    database = sqlite.sqlite3.open('sailboat.sqlite');
     nameList = database.select('SELECT * FROM dataState');
     print(nameList);
     for (var i = 0; i < nameList.length; i++) {
