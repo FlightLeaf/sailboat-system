@@ -1,7 +1,5 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 class ViewPage extends StatefulWidget {
@@ -12,9 +10,6 @@ class ViewPage extends StatefulWidget {
 
 
 class _ViewState extends State<ViewPage> {
-
-  final endValueKey = GlobalKey();
-  final startValueKey = GlobalKey();
 
   late sqlite.Database database;
 
@@ -29,6 +24,7 @@ class _ViewState extends State<ViewPage> {
   List<String> endItems = [];
   // 创建 DataColumn 链表
   List<DataColumn> dataColumns = [];
+  List<DataRow> dataRows = [];
 
   @override
   void initState() {
@@ -36,7 +32,6 @@ class _ViewState extends State<ViewPage> {
     // 在 initState 中打开数据库
     database = sqlite.sqlite3.open('sailboat.sqlite');
     nameList = database.select('SELECT * FROM dataState');
-    print(nameList);
     for (var i = 0; i < nameList.length; i++) {
       String name = nameList[i]['name'];
       if(nameList[i]['state'] == 1){
@@ -48,9 +43,7 @@ class _ViewState extends State<ViewPage> {
     List<Map<String, dynamic>> startList = database.select('SELECT time FROM water_data ORDER BY time ASC');
     startList.forEach((element) => startItems.add(element['time']));
     startList.forEach((element) => endItems.add(element['time']));
-
   }
-
 
   @override
   void dispose() {
@@ -59,46 +52,49 @@ class _ViewState extends State<ViewPage> {
     super.dispose();
   }
 
-  String exchangeData(var name){
-    switch ( name ) {
-      case '时间': {
-        return "time";
-      } break;
-      case "经度": {
-        return "longitude";
-      } break;
-      case '纬度': {
-        return "latitude";
-      } break;
-      case "地点": {
-        return "place";
-      } break;
-      case '温度': {
-        return "temperature";
-      } break;
-      case "PH值": {
-        return "PH";
-      } break;
-      case '电导率': {
-        return "electrical";
-      } break;
-      case "溶解氧": {
-        return "O2";
-      } break;
-      case '浊度': {
-        return "dirty";
-      } break;
-      case "叶绿素": {
-        return "green";
-      } break;
-      case "氨氮": {
-        return "NHN";
-      } break;
-      case "水中油": {
-        return "oil";
-      } break;
+  void BuildTable() {
+    dataRows.clear();
+    for(final list in dataList){
+      final cells = <DataCell>[];
+      if(nameList[0]['state'] == 1){
+        cells.add(DataCell(Text(list['time'].toString()),));
+      }
+      if(nameList[1]['state'] == 1){
+        cells.add(DataCell(Text(list['longitude'].toString()),));
+      }
+      if(nameList[2]['state'] == 1){
+        cells.add(DataCell(Text(list['latitude'].toString()),));
+      }
+      if(nameList[3]['state'] == 1){
+        cells.add(DataCell(Text(list['place'].toString()),));
+      }
+      if(nameList[4]['state'] == 1){
+        cells.add(DataCell(Text(list['temperature'].toString()),));
+      }
+      if(nameList[5]['state'] == 1){
+        cells.add(DataCell(Text(list['PH'].toString()),));
+      }
+      if(nameList[6]['state'] == 1){
+        cells.add(DataCell(Text(list['electrical'].toString()),));
+      }
+      if(nameList[7]['state'] == 1){
+        cells.add(DataCell(Text(list['O2'].toString()),));
+      }
+      if(nameList[8]['state'] == 1){
+        cells.add(DataCell(Text(list['dirty'].toString()),));
+      }
+      if(nameList[9]['state'] == 1){
+        cells.add(DataCell(Text(list['green'].toString()),));
+      }
+      if(nameList[10]['state'] == 1){
+        cells.add(DataCell(Text(list['NHN'].toString()),));
+      }
+      if(nameList[11]['state'] == 1){
+        cells.add(DataCell(Text(list['oil'].toString()),));
+      }
+      dataRows.add(DataRow(cells: cells));
     }
-    return "";
+    setState(() {});
   }
 
   @override
@@ -124,6 +120,7 @@ class _ViewState extends State<ViewPage> {
                         final result = database.select('SELECT * FROM water_data WHERE time LIKE \'%'+value!+'%\' OR place LIKE \'%'+value+'%\' ORDER BY time ASC');
                         setState(() {
                           dataList = result;
+                          BuildTable();
                         });
                       });
                     },
@@ -171,7 +168,6 @@ class _ViewState extends State<ViewPage> {
                 Expanded(
                   flex: 3,
                   child: DropdownButton<String>(
-                    key: startValueKey,
                     focusColor: Colors.white.withOpacity(0.0),
                     value: start_value,
                     onChanged: (String? newValue) {
@@ -195,7 +191,6 @@ class _ViewState extends State<ViewPage> {
                 Expanded(
                   flex: 3,
                   child: DropdownButton<String>(
-                    key: endValueKey,
                     focusColor: Colors.white.withOpacity(0.0),
                     value: end_value,
                     onChanged: (String? newValue) {
@@ -219,6 +214,7 @@ class _ViewState extends State<ViewPage> {
                       final result = database.select('SELECT * FROM water_data WHERE place = \''+place_value+'\' AND time BETWEEN \''+start_value+'\' AND \''+end_value+'\' ORDER BY time ASC');
                       setState(() {
                         dataList = result;
+                        BuildTable();
                       });
                     },
                     child: Text('查询'),
@@ -231,22 +227,7 @@ class _ViewState extends State<ViewPage> {
             SizedBox(height: 20.0),
             DataTable(
               columns: dataColumns,
-              rows: dataList.map<DataRow>((data) {
-                return DataRow(cells: [
-                  DataCell(Text(data["time"].toString())),
-                  DataCell(Text(data["longitude"].toString())),
-                  DataCell(Text(data["latitude"].toString())),
-                  DataCell(Text(data["place"].toString())),
-                  DataCell(Text(data["temperature"].toString())),
-                  DataCell(Text(data["PH"].toString())),
-                  DataCell(Text(data["electrical"].toString())),
-                  DataCell(Text(data["O2"].toString())),
-                  DataCell(Text(data["dirty"].toString())),
-                  DataCell(Text(data["green"].toString())),
-                  DataCell(Text(data["NHN"].toString())),
-                  DataCell(Text(data["oil"].toString())),
-                ]);
-              }).toList(),
+              rows: dataRows,
             ),
           ],
         ),
@@ -258,20 +239,7 @@ class _ViewState extends State<ViewPage> {
           final result = database.select('SELECT * FROM water_data order BY time ASC');
           setState(() {
             dataList = result;
-            /*List<dynamic> mutableList = List.from(dataList);
-            for (int i = 0; i < mutableList.length; i++) {
-              Map<String, dynamic> data = dataList[i];
-              Map<String, dynamic> mutableData = Map<String, dynamic>.from(data);
-              for (var i = 0; i < nameList.length; i++) {
-                String name = nameList[i]['name'];
-                if(nameList[i]['state'] == 0){
-                  mutableData[exchangeData(name)] = '';
-                }
-              }
-              mutableList.add(mutableData);
-            }
-            dataList = List.from(mutableList);
-            List<DataRow> row = List.from(dataList);*/
+            BuildTable();
           });
         },
         child: Icon(Icons.all_inclusive),

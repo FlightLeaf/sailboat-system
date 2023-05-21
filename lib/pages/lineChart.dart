@@ -1,28 +1,21 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 class lineChart{
 
-  List<FlSpot> data = [
-    FlSpot(0, 3),
-    FlSpot(1, 5),
-    FlSpot(2, 6),
-    FlSpot(3, 4),
-    FlSpot(4, 7),
-    FlSpot(5, 3),
-    FlSpot(6, 5),
-    FlSpot(7, 6),
-    FlSpot(8, 4),
-    FlSpot(9, 7),
-    FlSpot(10, 3),
-  ];
+  late sqlite.Database database;
+
+  List<FlSpot> data = [];
+  List<Map<String, dynamic>> dataList = [];
 
   LineChartBarData get lineChartBarData => LineChartBarData(
     isCurved: true,
+    color: Colors.blue,
     barWidth: 3,
     isStrokeCapRound: false,
-    dotData: FlDotData(show: false),
+    dotData: FlDotData(show: true),
     belowBarData: BarAreaData(show: false),
     isStepLineChart:false,
     spots: data,
@@ -83,17 +76,16 @@ class lineChart{
   ];
 
 
-  LineChartData sampleData() {
+  LineChartData sampleData(List<FlSpot> data_,List<Map<String, dynamic>> chartList) {
+    data.clear();dataList.clear();
+    data = data_;dataList = chartList;
     return LineChartData(
-      //? 是否可以点击
       lineTouchData: LineTouchData(
           enabled:true,
           touchTooltipData: LineTouchTooltipData(
             tooltipBgColor: Colors.white,
-
-          )
+          ),
       ),
-      //? 网格线配置
       minY: getMinY(data),
       maxY: getMaxY(data),
       gridData: FlGridData(
@@ -102,25 +94,25 @@ class lineChart{
       titlesData: FlTitlesData(
         show: true,
         topTitles: AxisTitles(
-          axisNameWidget: Text('',)
+            axisNameWidget: Text('',)
         ),
         rightTitles: AxisTitles(
             axisNameWidget: Text('',)
         ),
         bottomTitles:AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
-            interval: 1,
-            getTitlesWidget:(value,data_) {
-              return Row(
-                children: [
-                  Transform(
-                    transform: Matrix4.rotationZ(getNum(data).toDouble()*0.05), // 将文本向右倾斜10度
-                    child: Text(value.toString() + '年月日'),
-                  )
-                ],
-              );
-            }
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget:(value,data_) {
+                return Row(
+                  children: [
+                    Transform(
+                      transform: Matrix4.rotationZ(getNum(data).toDouble()*0.05), // 将文本向右倾斜10度
+                      child: Text(dataInit(value)),
+                    )
+                  ],
+                );
+              }
           ),
 
         ),
@@ -150,5 +142,50 @@ class lineChart{
       ),
       lineBarsData: lineBarsData,
     );
+  }
+  String exchangeData(var name){
+    switch ( name ) {
+      case '时间': {
+        return "time";
+      } break;
+      case "经度": {
+        return "longitude";
+      } break;
+      case '纬度': {
+        return "latitude";
+      } break;
+      case "地点": {
+        return "place";
+      } break;
+      case '温度': {
+        return "temperature";
+      } break;
+      case "PH值": {
+        return "PH";
+      } break;
+      case '电导率': {
+        return "electrical";
+      } break;
+      case "溶解氧": {
+        return "O2";
+      } break;
+      case '浊度': {
+        return "dirty";
+      } break;
+      case "叶绿素": {
+        return "green";
+      } break;
+      case "氨氮": {
+        return "NHN";
+      } break;
+      case "水中油": {
+        return "oil";
+      } break;
+    }
+    return "";
+  }
+  String dataInit(double x){
+    int number = x.toInt();
+    return dataList[number]['time'];
   }
 }

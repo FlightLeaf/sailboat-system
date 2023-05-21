@@ -1,9 +1,9 @@
-
 import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 import '../models/WaterData.dart';
 import 'AnalysisPage.dart';
@@ -21,6 +21,63 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  late sqlite.Database database;
+
+  List<Map<String, dynamic>> nameList = [];
+
+  var start_value,place_value,end_value;
+
+  List<String> placeItems = [];
+  List<String> startItems = [];
+  List<String> endItems = [];
+  List<String> dataItems = [];
+
+  GlobalKey chart = GlobalKey();
+
+  List<Map<String, dynamic>> chartList = [];
+
+  List<int> number_ = [];
+
+  List<FlSpot> data = [
+    FlSpot(1, 1),
+    FlSpot(2, 1),
+    FlSpot(3, 1),
+    FlSpot(4, 1),
+  ];
+
+  bool _state = false;
+
+  void DButil(String data_value,String place,String start,String end){
+    data.clear();
+    number_.clear();
+    database = sqlite.sqlite3.open('sailboat.sqlite');
+    data_value = exchangeData(data_value);
+    chartList = database.select('SELECT time,'+data_value+' FROM water_data where place = \''+place+'\' and time between \''+start+'\' and \''+end+'\'  ORDER BY time ASC');
+    for (var i = 0; i < chartList.length; i++) {
+      double water = chartList[i][data_value];
+      data.add(FlSpot(i.toDouble(), water));
+      number_.add(i);
+    }
+    database.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 在 initState 中打开数据库
+    database = sqlite.sqlite3.open('sailboat.sqlite');
+    nameList = database.select('SELECT name FROM dataState where state = \'1\' and special = \'1\'');
+    for (var i = 0; i < nameList.length; i++) {
+      String name = nameList[i]['name'];
+      dataItems.add(name);
+    }
+    List<Map<String, dynamic>> placeList = database.select('SELECT DISTINCT place FROM water_data');
+    placeList.forEach((element) => placeItems.add(element['place']));
+    List<Map<String, dynamic>> startList = database.select('SELECT time FROM water_data ORDER BY time ASC');
+    startList.forEach((element) => startItems.add(element['time']));
+    startList.forEach((element) => endItems.add(element['time']));
+  }
 
   void _analysisBtn(){
     Navigator.push(
@@ -48,7 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => ViewPage()));
   }
 
-  var place_value,data_value,start_value,end_value;
+  var data_value;
+
+  LineChartData line = lineChart().sampleData([
+    FlSpot(1, 1),
+    FlSpot(2, 1),
+    FlSpot(3, 1),
+    FlSpot(4, 1),
+  ],[]);
 
   final PageController pageController = PageController(initialPage: 0);
 
@@ -56,18 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var color;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(widget.title,style: const TextStyle(fontFamily: '黑体',),),
       ),
       body: Row(
         children: [
-          Expanded(
-            flex: 1,
-            child: Center(
-            ),
-          ),
           Expanded(
             flex: 4,
             child: Column(
@@ -80,10 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Text('选择查看条件',style: TextStyle(fontSize: 20,fontFamily: '黑体'),),
                         Container(
-                          height: 40,
+                          height: 5,
                         ),
                         ListTile(
-                          title: const Text('测量项目：',style: TextStyle(fontStyle: FontStyle.normal,),),
+                          title: const Text('测量项目',style: TextStyle(fontStyle: FontStyle.normal,),textAlign: TextAlign.left,),
                           trailing:
                           DropdownButton<String>(
                             focusColor: Colors.white.withOpacity(0.0),
@@ -95,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               });
                             },
                             items:
-                            <String>['Option 1', 'Option 2', 'Option 3', 'Option 4'].map<DropdownMenuItem<String>>((String value) {
+                            dataItems.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -104,10 +164,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         Container(
-                          height: 10,
+                          height: 5,
                         ),
                         ListTile(
-                          title: const Text('地区：',style: TextStyle(fontStyle: FontStyle.normal,),),
+                          title: const Text('地区',style: TextStyle(fontStyle: FontStyle.normal,),),
                           trailing:
                           DropdownButton<String>(
                             focusColor: Colors.white.withOpacity(0.0),
@@ -118,8 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 place_value = newValue!;
                               });
                             },
-                            items: <String>['Option 1', 'Option 2', 'Option 3', 'Option 4']
-                                .map<DropdownMenuItem<String>>((String value) {
+                            items: placeItems.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -128,10 +187,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         Container(
-                          height: 10,
+                          height: 5,
                         ),
                         ListTile(
-                          title: const Text('开始时间：',style: TextStyle(fontStyle: FontStyle.normal,),),
+                          title: const Text('开始时间',style: TextStyle(fontStyle: FontStyle.normal,),),
                           trailing:
                           DropdownButton<String>(
                             focusColor: Colors.white.withOpacity(0.0),
@@ -142,8 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 start_value = newValue!;
                               });
                             },
-                            items: <String>['Option 1', 'Option 2', 'Option 3', 'Option 4']
-                                .map<DropdownMenuItem<String>>((String value) {
+                            items:
+                            startItems.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -152,10 +211,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         Container(
-                          height: 10,
+                          height: 5,
                         ),
                         ListTile(
-                          title: const Text('截止时间：',style: TextStyle(fontStyle: FontStyle.normal,),),
+                          title: const Text('截止时间',style: TextStyle(fontStyle: FontStyle.normal,),),
                           trailing:
                           DropdownButton<String>(
                             focusColor: Colors.white.withOpacity(0.0),
@@ -165,8 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 end_value = newValue!;
                               });
                             },
-                            items: <String>['Option 1', 'Option 2', 'Option 3', 'Option 4']
-                                .map<DropdownMenuItem<String>>((String value) {
+                            items:
+                            endItems.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -178,12 +237,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           height: 10,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            DButil(data_value, place_value, start_value, end_value);
+                            setState(() {
+                              line = lineChart().sampleData(data,chartList);
+                              _state = true;
+                            });
+                          },
                           style: TextButton.styleFrom(
-                            minimumSize: Size(200, 40),
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Theme.of(context).primaryColor,
                           ),
-                          child: const Text('查询',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
+                          child: const Text('  查  询  ',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
                         ),
                       ],
                     ),
@@ -193,15 +257,14 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Expanded(
-            flex: 12,
+            flex: 10,
             child: Column(
               children: [
                 Expanded(flex:1,child: Center(),),
                 Expanded(
+                  key: chart,
                   flex: 8,
-                    child:LineChart(
-                        lineChart().sampleData()
-                    ),
+                    child: _state?LineChart(line):Container(),
                   ),
                 Expanded(flex:2,child: Center(),),
               ],
@@ -221,6 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {
               accountName: Text('Unmanned sailboat'),
               accountEmail: Text('"峨峨楼船夜夜飞，千门万户曈曈发。"',style: TextStyle(fontFamily: "宋体"),),
               currentAccountPicture: Icon(Icons.sailing,size: 60,color: Colors.white,),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.area_chart_outlined),
@@ -261,11 +327,51 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () async {
           ProcessResult result = await Process.run('RTMS.exe', ['arg1', 'arg2']);
         },
-        backgroundColor: Colors.lightBlue,
-        child: Icon(Icons.sailing),
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
+        child: Icon(Icons.sailing,color: Colors.white,),
         tooltip: '实时监测系统',
       ),
     );
-
+  }
+  String exchangeData(var name){
+    switch ( name ) {
+      case '时间': {
+        return "time";
+      } break;
+      case "经度": {
+        return "longitude";
+      } break;
+      case '纬度': {
+        return "latitude";
+      } break;
+      case "地点": {
+        return "place";
+      } break;
+      case '温度': {
+        return "temperature";
+      } break;
+      case "PH值": {
+        return "PH";
+      } break;
+      case '电导率': {
+        return "electrical";
+      } break;
+      case "溶解氧": {
+        return "O2";
+      } break;
+      case '浊度': {
+        return "dirty";
+      } break;
+      case "叶绿素": {
+        return "green";
+      } break;
+      case "氨氮": {
+        return "NHN";
+      } break;
+      case "水中油": {
+        return "oil";
+      } break;
+    }
+    return "";
   }
 }
