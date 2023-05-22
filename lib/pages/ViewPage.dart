@@ -1,5 +1,8 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:sailboatsystem/models/WaterData.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 class ViewPage extends StatefulWidget {
@@ -22,9 +25,14 @@ class _ViewState extends State<ViewPage> {
   List<String> placeItems = [];
   List<String> startItems = [];
   List<String> endItems = [];
-  // 创建 DataColumn 链表
   List<DataColumn> dataColumns = [];
   List<DataRow> dataRows = [];
+
+  List<WaterData> dataView = [];
+
+  List<DataRow> dateRows = [];
+
+  bool selected = false;
 
   @override
   void initState() {
@@ -55,7 +63,8 @@ class _ViewState extends State<ViewPage> {
   void BuildTable() {
     dataRows.clear();
     for(final list in dataList){
-      final cells = <DataCell>[];
+      List<DataCell> cells = [];
+      //final cells = <DataCell>[];
       if(nameList[0]['state'] == 1){
         cells.add(DataCell(Text(list['time'].toString()),));
       }
@@ -223,8 +232,8 @@ class _ViewState extends State<ViewPage> {
                 SizedBox(width: 30.0),
               ],
             ),
-
             SizedBox(height: 20.0),
+            Divider(),
             DataTable(
               columns: dataColumns,
               rows: dataRows,
@@ -239,6 +248,14 @@ class _ViewState extends State<ViewPage> {
           final result = database.select('SELECT * FROM water_data order BY time ASC');
           setState(() {
             dataList = result;
+            for (final row in result) {
+              Map<String, dynamic> record = {};
+              record.clear();
+              for (var columnName in row.keys) {
+                record[columnName] = row[columnName];
+              }
+              dataView.add(WaterData.fromJson(record));
+            }
             BuildTable();
           });
         },

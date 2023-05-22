@@ -13,7 +13,15 @@ class SettingPage extends StatefulWidget{
 
 class _SettingPage extends State<SettingPage>{
 
-  String data_value = '简体中文';
+  bool? temp_isSelected = false;
+  bool? ph_isSelected = false;
+  bool? ele_isSelected = false;
+  bool? O2_isSelected = false;
+  bool? dirty_isSelected = false;
+  bool? green_isSelected = false;
+  bool? NHN_isSelected = false;
+  bool? oil_isSelected = false;
+
   bool switchValue = true;
   String? color_value;
   var color_no;
@@ -58,8 +66,46 @@ class _SettingPage extends State<SettingPage>{
     super.initState();
     database = sqlite.sqlite3.open('sailboat.sqlite');
     List<Map<String, dynamic>> theme = [];
+    List<Map<String, dynamic>> select = [];
     theme = database.select('SELECT theme FROM Settings');
+    select = database.select('SELECT * FROM dataState');
     color_value = Exchangecolor(theme[0]['Theme']);
+    for(int i = 0;i<select.length;i++){
+      switch(exchangeData(select[i]['name'])){
+        case 'temperature':
+          if(select[i]['state'].toString() == '1'){
+            temp_isSelected = true;
+          }
+        case 'PH':
+          if(select[i]['state'].toString() == '1'){
+            ph_isSelected = true;
+          }
+        case 'electrical':
+          if(select[i]['state'].toString() == '1'){
+            ele_isSelected = true;
+          }
+        case 'O2':
+          if(select[i]['state'].toString() == '1'){
+            O2_isSelected = true;
+          }
+        case 'dirty':
+          if(select[i]['state'].toString() == '1'){
+            dirty_isSelected = true;
+          }
+        case 'green':
+          if(select[i]['state'].toString() == '1'){
+            green_isSelected = true;
+          }
+        case 'NHN':
+          if(select[i]['state'].toString() == '1'){
+            NHN_isSelected = true;
+          }
+        case 'oil':
+          if(select[i]['state'].toString() == '1'){
+            oil_isSelected = true;
+          }
+      }
+    }
   }
 
   void ThemeSet(String value){
@@ -135,40 +181,155 @@ class _SettingPage extends State<SettingPage>{
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 children: [
                   ListTile(
-                    title: Text('夜间模式'),
-                    trailing: Switch(
-                      value: switchValue,
-                      onChanged: (value){
-                        setState(() {
-                          switchValue = !switchValue;
-                        });
-                      },
-                    ),
+                    title: Text('可测量元素：'),
                   ),
                   Divider(),
                   ListTile(
-                    title: const Text('语言'),
-                    trailing:
-                    DropdownButton<String>(
-                      focusColor: Colors.white.withOpacity(0.0),
-                      value: data_value,
-                      onChanged: (String? newValue) {
-                        // 更新下拉框的值
+                    title: Text('温度'),
+                    trailing: Checkbox(
+                      activeColor: Colors.blue, // 设置复选框激活时的颜色
+                      checkColor: Colors.white, // 设置勾选标记的颜色
+                      value: temp_isSelected,
+                      onChanged: (newValue) {
                         setState(() {
-                          data_value = newValue!;
+                          temp_isSelected = newValue;
+                          var states = '0';
+                          if(newValue == true){
+                            states = '1';
+                          }
+                          database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'温度(℃)\'');
                         });
                       },
-                      items:
-                      <String>['简体中文', 'English'].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+                    )
+                  ),
+                  ListTile(
+                      title: Text('PH值'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: ph_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            ph_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'PH值\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('电导率'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: ele_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            ele_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'电导率(S/m)\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('溶解氧'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: O2_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            O2_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'溶解氧(mg/L)\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('浊度'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: dirty_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            dirty_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'浊度(NTU)\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('叶绿素'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: green_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            green_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'叶绿素(μg/L)\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('氨氮'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: NHN_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            NHN_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'氨氮(mg/L)\'');
+                          });
+                        },
+                      )
+                  ),
+                  ListTile(
+                      title: Text('水中油'),
+                      trailing: Checkbox(
+                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        checkColor: Colors.white, // 设置勾选标记的颜色
+                        value: oil_isSelected,
+                        onChanged: (newValue) {
+                          setState(() {
+                            oil_isSelected = newValue;
+                            var states = '0';
+                            if(newValue == true){
+                              states = '1';
+                            }
+                            database.execute('UPDATE dataState set state = \''+states+'\' WHERE name = \'水中油(mg/L)\'');
+                          });
+                        },
+                      )
                   ),
                   Divider(),
-
+                  Text('注意：数据图表页面需重启方能生效',style: TextStyle(fontSize: 12),)
                 ],
               ),
             ),
@@ -176,5 +337,46 @@ class _SettingPage extends State<SettingPage>{
           ],
         )
     );
+  }
+  String exchangeData(var name){
+    switch ( name ) {
+      case '时间': {
+        return "time";
+      } break;
+      case "经度": {
+        return "longitude";
+      } break;
+      case '纬度': {
+        return "latitude";
+      } break;
+      case "地点": {
+        return "place";
+      } break;
+      case '温度(℃)': {
+        return "temperature";
+      } break;
+      case "PH值": {
+        return "PH";
+      } break;
+      case '电导率(S/m)': {
+        return "electrical";
+      } break;
+      case "溶解氧(mg/L)": {
+        return "O2";
+      } break;
+      case '浊度(NTU)': {
+        return "dirty";
+      } break;
+      case "叶绿素(μg/L)": {
+        return "green";
+      } break;
+      case "氨氮(mg/L)": {
+        return "NHN";
+      } break;
+      case "水中油(mg/L)": {
+        return "oil";
+      } break;
+    }
+    return "";
   }
 }

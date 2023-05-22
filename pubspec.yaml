@@ -36,7 +36,8 @@ dependencies:
   sqflite: ^2.0.0+3
   fl_chart: ^0.62.0
   provider:
-  charts_flutter:
+  d_chart: ^2.2.11 #饼图不错
+  syncfusion_flutter_charts: ^21.2.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

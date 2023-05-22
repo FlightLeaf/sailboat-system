@@ -6,5 +6,5 @@ List<Color> themeList = [
   Colors.blue,
   Colors.lightBlue,
   Colors.green.shade500,
-  Colors.pink.shade300,
+  Colors.pink.shade200,
 ];

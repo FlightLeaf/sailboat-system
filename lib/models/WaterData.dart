@@ -12,115 +12,75 @@ import 'dart:convert';
 /// electrical : 7.1
 /// temperature : 15.27272727
 
+// To parse this JSON data, do
+//
+//     final waterData = waterDataFromJson(jsonString);
+
 WaterData waterDataFromJson(String str) => WaterData.fromJson(json.decode(str));
+
 String waterDataToJson(WaterData data) => json.encode(data.toJson());
+
 class WaterData {
+
+  DateTime time;
+  String longitude;
+  String latitude;
+  String place;
+  double temperature;
+  double ph;
+  double electrical;
+  double o2;
+  double dirty;
+  double green;
+  double nhn;
+  double oil;
+  bool selected;
+
   WaterData({
-      num? o2, 
-      num? ph, 
-      num? nhn, 
-      num? oil, 
-      String? time, 
-      num? dirty, 
-      num? green, 
-      String? place, 
-      String? latitude, 
-      String? longitude, 
-      num? electrical, 
-      num? temperature,}){
-    _o2 = o2;
-    _ph = ph;
-    _nhn = nhn;
-    _oil = oil;
-    _time = time;
-    _dirty = dirty;
-    _green = green;
-    _place = place;
-    _latitude = latitude;
-    _longitude = longitude;
-    _electrical = electrical;
-    _temperature = temperature;
-}
+    required this.time,
+    required this.longitude,
+    required this.latitude,
+    required this.place,
+    required this.temperature,
+    required this.ph,
+    required this.electrical,
+    required this.o2,
+    required this.dirty,
+    required this.green,
+    required this.nhn,
+    required this.oil,
+    this.selected = false
+  });
 
-  WaterData.fromJson(dynamic json) {
-    _o2 = json['O2'];
-    _ph = json['PH'];
-    _nhn = json['NHN'];
-    _oil = json['oil'];
-    _time = json['time'];
-    _dirty = json['dirty'];
-    _green = json['green'];
-    _place = json['place'];
-    _latitude = json['latitude'];
-    _longitude = json['longitude'];
-    _electrical = json['electrical'];
-    _temperature = json['temperature'];
-  }
-  num? _o2;
-  num? _ph;
-  num? _nhn;
-  num? _oil;
-  String? _time;
-  num? _dirty;
-  num? _green;
-  String? _place;
-  String? _latitude;
-  String? _longitude;
-  num? _electrical;
-  num? _temperature;
-WaterData copyWith({  num? o2,
-  num? ph,
-  num? nhn,
-  num? oil,
-  String? time,
-  num? dirty,
-  num? green,
-  String? place,
-  String? latitude,
-  String? longitude,
-  num? electrical,
-  num? temperature,
-}) => WaterData(  o2: o2 ?? _o2,
-  ph: ph ?? _ph,
-  nhn: nhn ?? _nhn,
-  oil: oil ?? _oil,
-  time: time ?? _time,
-  dirty: dirty ?? _dirty,
-  green: green ?? _green,
-  place: place ?? _place,
-  latitude: latitude ?? _latitude,
-  longitude: longitude ?? _longitude,
-  electrical: electrical ?? _electrical,
-  temperature: temperature ?? _temperature,
-);
-  num? get o2 => _o2;
-  num? get ph => _ph;
-  num? get nhn => _nhn;
-  num? get oil => _oil;
-  String? get time => _time;
-  num? get dirty => _dirty;
-  num? get green => _green;
-  String? get place => _place;
-  String? get latitude => _latitude;
-  String? get longitude => _longitude;
-  num? get electrical => _electrical;
-  num? get temperature => _temperature;
+  factory WaterData.fromJson(Map<String, dynamic> json) => WaterData(
+    time: DateTime.parse(json["time"]),
+    longitude: json["longitude"],
+    latitude: json["latitude"],
+    place: json["place"],
+    temperature: json["temperature"],
+    ph: json["PH"],
+    electrical: json["electrical"],
+    o2: json["O2"],
+    dirty: json["dirty"],
+    green: json["green"],
+    nhn: json["NHN"],
+    oil: json["oil"],
+    //selected: json["select"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['O2'] = _o2;
-    map['PH'] = _ph;
-    map['NHN'] = _nhn;
-    map['oil'] = _oil;
-    map['time'] = _time;
-    map['dirty'] = _dirty;
-    map['green'] = _green;
-    map['place'] = _place;
-    map['latitude'] = _latitude;
-    map['longitude'] = _longitude;
-    map['electrical'] = _electrical;
-    map['temperature'] = _temperature;
-    return map;
-  }
-
+  Map<String, dynamic> toJson() => {
+    "time": time.toIso8601String(),
+    "longitude": longitude,
+    "latitude": latitude,
+    "place": place,
+    "temperature": temperature,
+    "PH": ph,
+    "electrical": electrical,
+    "O2": o2,
+    "dirty": dirty,
+    "green": green,
+    "NHN": nhn,
+    "oil": oil,
+    "selected":selected,
+  };
 }
