@@ -22,7 +22,7 @@ String waterDataToJson(WaterData data) => json.encode(data.toJson());
 
 class WaterData {
 
-  DateTime time;
+  String time;
   String longitude;
   String latitude;
   String place;
@@ -53,7 +53,7 @@ class WaterData {
   });
 
   factory WaterData.fromJson(Map<String, dynamic> json) => WaterData(
-    time: DateTime.parse(json["time"]),
+    time: json["time"],
     longitude: json["longitude"],
     latitude: json["latitude"],
     place: json["place"],
@@ -69,7 +69,7 @@ class WaterData {
   );
 
   Map<String, dynamic> toJson() => {
-    "time": time.toIso8601String(),
+    "time": time,
     "longitude": longitude,
     "latitude": latitude,
     "place": place,
@@ -83,4 +83,20 @@ class WaterData {
     "oil": oil,
     "selected":selected,
   };
+
+  List<Map<String, dynamic>> tolist() => [
+    {'time': time},
+    {'longitude': longitude},
+    {'latitude': latitude},
+    {'place': place},
+    {'temperature': temperature},
+    {'PH': ph},
+    {'electrical': electrical},
+    {'O2': o2},
+    {'dirty': dirty},
+    {'green': green},
+    {'NHN': nhn},
+    {'oil': oil},
+    {'selected': selected},
+  ];
 }

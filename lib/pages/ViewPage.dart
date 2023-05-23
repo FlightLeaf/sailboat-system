@@ -1,8 +1,5 @@
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:sailboatsystem/models/WaterData.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 class ViewPage extends StatefulWidget {
@@ -10,7 +7,6 @@ class ViewPage extends StatefulWidget {
   @override
   _ViewState createState() => _ViewState();
 }
-
 
 class _ViewState extends State<ViewPage> {
 
@@ -25,10 +21,10 @@ class _ViewState extends State<ViewPage> {
   List<String> placeItems = [];
   List<String> startItems = [];
   List<String> endItems = [];
+
+  //行列
   List<DataColumn> dataColumns = [];
   List<DataRow> dataRows = [];
-
-  List<WaterData> dataView = [];
 
   List<DataRow> dateRows = [];
 
@@ -46,11 +42,13 @@ class _ViewState extends State<ViewPage> {
         dataColumns.add(DataColumn(label: Text(name)));
       }
     }
+    dataList = database.select('SELECT * FROM water_data');
     List<Map<String, dynamic>> placeList = database.select('SELECT DISTINCT place FROM water_data');
     placeList.forEach((element) => placeItems.add(element['place']));
     List<Map<String, dynamic>> startList = database.select('SELECT time FROM water_data ORDER BY time ASC');
     startList.forEach((element) => startItems.add(element['time']));
     startList.forEach((element) => endItems.add(element['time']));
+    print(placeList);
   }
 
   @override
@@ -64,7 +62,6 @@ class _ViewState extends State<ViewPage> {
     dataRows.clear();
     for(final list in dataList){
       List<DataCell> cells = [];
-      //final cells = <DataCell>[];
       if(nameList[0]['state'] == 1){
         cells.add(DataCell(Text(list['time'].toString()),));
       }
@@ -254,7 +251,6 @@ class _ViewState extends State<ViewPage> {
               for (var columnName in row.keys) {
                 record[columnName] = row[columnName];
               }
-              dataView.add(WaterData.fromJson(record));
             }
             BuildTable();
           });

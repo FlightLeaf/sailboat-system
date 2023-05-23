@@ -33,11 +33,10 @@ dependencies:
   path_provider: ^2.0.11
   sqlite3: ^1.11.1
   path: ^1.8.1
-  sqflite: ^2.0.0+3
   fl_chart: ^0.62.0
   provider:
-  d_chart: ^2.2.11 #饼图不错
   syncfusion_flutter_charts: ^21.2.5
+  syncfusion_flutter_pdfviewer:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -59,7 +58,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - pdf/fish.pdf
+    - pdf/os.pdf
+    - pdf/place.pdf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

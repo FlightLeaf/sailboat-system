@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sailboatsystem/pages/MyHomePage.dart';
+import 'package:sailboatsystem/pages/HomePage.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:provider/provider.dart';
 
-import 'ThemeColor.dart';
+import 'models/ThemeColor.dart';
 
 void main() {
   runApp(MyApp());
