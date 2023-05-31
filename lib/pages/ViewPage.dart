@@ -1,14 +1,16 @@
-
+import 'dart:io';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 class ViewPage extends StatefulWidget {
-  ViewPage({Key? key});
+  const ViewPage({super.key});
   @override
   _ViewState createState() => _ViewState();
 }
 
 class _ViewState extends State<ViewPage> {
+  var sql,search;
 
   late sqlite.Database database;
 
@@ -42,13 +44,19 @@ class _ViewState extends State<ViewPage> {
         dataColumns.add(DataColumn(label: Text(name)));
       }
     }
+    dataColumns.add(const DataColumn(label: Text('操作'),),);
     dataList = database.select('SELECT * FROM water_data');
     List<Map<String, dynamic>> placeList = database.select('SELECT DISTINCT place FROM water_data');
-    placeList.forEach((element) => placeItems.add(element['place']));
+    for (var element in placeList) {
+      placeItems.add(element['place']);
+    }
     List<Map<String, dynamic>> startList = database.select('SELECT time FROM water_data ORDER BY time ASC');
-    startList.forEach((element) => startItems.add(element['time']));
-    startList.forEach((element) => endItems.add(element['time']));
-    print(placeList);
+    for (var element in startList) {
+      startItems.add(element['time']);
+    }
+    for (var element in startList) {
+      endItems.add(element['time']);
+    }
   }
 
   @override
@@ -57,7 +65,6 @@ class _ViewState extends State<ViewPage> {
     database.dispose();
     super.dispose();
   }
-
   void BuildTable() {
     dataRows.clear();
     for(final list in dataList){
@@ -98,6 +105,28 @@ class _ViewState extends State<ViewPage> {
       if(nameList[11]['state'] == 1){
         cells.add(DataCell(Text(list['oil'].toString()),));
       }
+      cells.add(DataCell(IconButton(
+        onPressed: () {
+          var time;
+          time = list['time'];
+          sql = 'delete from water_data where time = \'$time\'';
+          database.execute(sql);
+          sql = 'SELECT * FROM water_data order BY time ASC';
+          final result = database.select(sql);
+          setState(() {
+            dataList = result;
+            for (final row in result) {
+              Map<String, dynamic> record = {};
+              record.clear();
+              for (var columnName in row.keys) {
+                record[columnName] = row[columnName];
+              }
+            }
+            BuildTable();
+          });
+        },
+        icon:Icon(Icons.delete_forever),
+      ),));
       dataRows.add(DataRow(cells: cells));
     }
     setState(() {});
@@ -116,39 +145,40 @@ class _ViewState extends State<ViewPage> {
               children: [
                 SizedBox(width: 30.0),
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: '搜索地址或时间',
                     ),
                     onChanged: (String? value){
                       setState(() {
-                        final result = database.select('SELECT * FROM water_data WHERE time LIKE \'%'+value!+'%\' OR place LIKE \'%'+value+'%\' ORDER BY time ASC');
-                        setState(() {
-                          dataList = result;
-                          BuildTable();
-                        });
+                        search = value;
                       });
                     },
                   ),
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Add search logic
+                      sql = 'SELECT * FROM water_data WHERE time LIKE \'%$search%\' OR place LIKE \'%$search%\' ORDER BY time ASC';
+                      final result = database.select(sql);
+                      setState(() {
+                        dataList = result;
+                        BuildTable();
+                      });
                     },
                     child: Text('搜索'),
                   ),
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Text('选择地址',),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: DropdownButton<String>(
                     focusColor: Colors.white.withOpacity(0.0),
                     value: place_value,
@@ -168,11 +198,11 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Text('开始时间',),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 5,
                   child: DropdownButton<String>(
                     focusColor: Colors.white.withOpacity(0.0),
                     value: start_value,
@@ -191,11 +221,11 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Text('结束时间',),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 5,
                   child: DropdownButton<String>(
                     focusColor: Colors.white.withOpacity(0.0),
                     value: end_value,
@@ -214,16 +244,31 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 12.0),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: ElevatedButton(
                     onPressed: () {
-                      final result = database.select('SELECT * FROM water_data WHERE place = \''+place_value+'\' AND time BETWEEN \''+start_value+'\' AND \''+end_value+'\' ORDER BY time ASC');
+                      sql = 'SELECT * FROM water_data WHERE place = \'$place_value\' AND time BETWEEN \'$start_value\' AND \'$end_value\' ORDER BY time ASC';
+                      final result = database.select(sql);
                       setState(() {
                         dataList = result;
                         BuildTable();
                       });
                     },
                     child: Text('查询'),
+                  ),
+                ),
+                SizedBox(width: 12.0),
+                Expanded(
+                  flex: 3,
+                  child: ElevatedButton(
+                    onPressed: (){
+                      final result = database.select(sql);
+                      setState(() {
+                        dataList = result;
+                      });
+                      exportExcel(dataList);
+                    },
+                    child: Text('生成报告'),
                   ),
                 ),
                 SizedBox(width: 30.0),
@@ -238,11 +283,11 @@ class _ViewState extends State<ViewPage> {
           ],
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         tooltip: '全部数据',
         onPressed: (){
-          final result = database.select('SELECT * FROM water_data order BY time ASC');
+          sql = 'SELECT * FROM water_data order BY time ASC';
+          final result = database.select(sql);
           setState(() {
             dataList = result;
             for (final row in result) {
@@ -255,8 +300,80 @@ class _ViewState extends State<ViewPage> {
             BuildTable();
           });
         },
-        child: Icon(Icons.all_inclusive),
+        child: Icon(Icons.align_horizontal_left),
       ),
     );
   }
+}
+
+void exportExcel(List<Map<String, dynamic>> dataList) async {
+  var excel = Excel.createExcel();
+  // 创建工作表
+  var sheet = excel['Sheet1'];
+
+  // 写入表头
+  late sqlite.Database database;
+  database = sqlite.sqlite3.open('sailboat.sqlite');
+  List<Map<String, dynamic>> nameList = [];
+  var tableHeaders = [];
+  nameList = database.select('SELECT * FROM dataState');
+  for (var i = 0; i < nameList.length; i++) {
+    String name = nameList[i]['name'];
+    if(nameList[i]['state'] == 1){
+      tableHeaders.add(name);
+    }
+  }
+
+  for (var i = 0; i < tableHeaders.length; i++) {
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0)).value = tableHeaders[i];
+  }
+  // 写入数据
+  for (var i = 0; i < dataList.length; i++) {
+    var rowData = [];
+    rowData.clear();
+    if(nameList[0]['state'] == 1){
+      rowData.add(dataList[i]['time'].toString());
+    }
+    if(nameList[1]['state'] == 1){
+      rowData.add(dataList[i]['longitude'].toString());
+    }
+    if(nameList[2]['state'] == 1){
+      rowData.add(dataList[i]['latitude'].toString());
+    }
+    if(nameList[3]['state'] == 1){
+      rowData.add(dataList[i]['place'].toString());
+    }
+    if(nameList[4]['state'] == 1){
+      rowData.add(dataList[i]['temperature'].toString());
+    }
+    if(nameList[5]['state'] == 1){
+      rowData.add(dataList[i]['PH'].toString());
+    }
+    if(nameList[6]['state'] == 1){
+      rowData.add(dataList[i]['electrical'].toString());
+    }
+    if(nameList[7]['state'] == 1){
+      rowData.add(dataList[i]['O2'].toString());
+    }
+    if(nameList[8]['state'] == 1){
+      rowData.add(dataList[i]['dirty'].toString());
+    }
+    if(nameList[9]['state'] == 1){
+      rowData.add(dataList[i]['green'].toString());
+    }
+    if(nameList[10]['state'] == 1){
+      rowData.add(dataList[i]['NHN'].toString());
+    }
+    if(nameList[11]['state'] == 1){
+      rowData.add(dataList[i]['oil'].toString());
+    }
+    for (var j = 0; j < rowData.length; j++) {
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i+1)).value = rowData[j];
+    }
+  }
+  // 保存文件
+  var file = File('example.xlsx');
+  await file.writeAsBytes(excel.encode()!);
+
+  print('Exported to ${file.path}');
 }
