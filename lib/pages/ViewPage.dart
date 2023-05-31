@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:excel/excel.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:filepicker_windows/filepicker_windows.dart';
 import 'package:flutter/material.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -371,9 +374,14 @@ void exportExcel(List<Map<String, dynamic>> dataList) async {
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i+1)).value = rowData[j];
     }
   }
-  // 保存文件
-  var file = File('example.xlsx');
-  await file.writeAsBytes(excel.encode()!);
-
-  print('Exported to ${file.path}');
+  const String fileName = '水质报告.xlsx';
+  final String? path = await getSavePath(suggestedName: fileName);
+  if (path == null) {
+    return;
+  }
+  final Uint8List fileData = Uint8List.fromList(excel.encode()!);
+  const String mimeType = 'text/plain';
+  final XFile textFile =
+  XFile.fromData(fileData, mimeType: mimeType, name: fileName);
+  await textFile.saveTo(path);
 }

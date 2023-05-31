@@ -39,6 +39,7 @@ dependencies:
   syncfusion_flutter_pdfviewer:
   excel: 2.1.0
   file_selector: ^0.9.3
+  filepicker_windows:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
