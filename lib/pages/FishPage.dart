@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class FishPage extends StatefulWidget {
+  const FishPage({super.key});
+
   @override
   QualityStandards  createState() =>  QualityStandards();
 }

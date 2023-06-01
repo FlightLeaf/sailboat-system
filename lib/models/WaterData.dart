@@ -84,7 +84,7 @@ class WaterData {
     "selected":selected,
   };
 
-  List<Map<String, dynamic>> tolist() => [
+  List<Map<String, dynamic>> toList() => [
     {'time': time},
     {'longitude': longitude},
     {'latitude': latitude},
