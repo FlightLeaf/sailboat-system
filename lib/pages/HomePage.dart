@@ -77,6 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
     for (var element in startList) {
       endItems.add(element['time']);
     }
+    var place = database.select('select place from water_data order by time desc limit 1');
+    var start = database.select('select time from water_data order by time asc limit 1');
+    var end = database.select('select time from water_data order by time desc limit 1');
+    _databaseTools('温度(℃)', place[0]['place'], start[0]['time'], end[0]['time']);
+    _state = true;
   }
 
 

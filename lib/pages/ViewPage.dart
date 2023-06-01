@@ -13,11 +13,12 @@ class ViewPage extends StatefulWidget {
 }
 
 class _ViewState extends State<ViewPage> {
-  var sql,search;
+  var sql,search,sql_new;
 
   late sqlite.Database database;
 
   List<Map<String, dynamic>> dataList = [];
+  var dataListItem;
 
   List<Map<String, dynamic>> nameList = [];
 
@@ -34,6 +35,8 @@ class _ViewState extends State<ViewPage> {
   List<DataRow> dateRows = [];
 
   bool selected = false;
+  int _sortColumnIndex = 1;
+  bool _sortAscending = true;
 
   @override
   void initState() {
@@ -44,7 +47,31 @@ class _ViewState extends State<ViewPage> {
     for (var i = 0; i < nameList.length; i++) {
       String name = nameList[i]['name'];
       if(nameList[i]['state'] == 1){
-        dataColumns.add(DataColumn(label: Text(name)));
+          dataColumns.add(DataColumn(
+            label: Text(name),
+            onSort: (columnIndex, ascending) {
+              setState(() {
+                _sortColumnIndex = columnIndex;
+                _sortAscending = ascending;
+                var tar = exchangeData(name);
+                if (ascending) {
+                  sql_new = sql+' ORDER BY $tar DESC';
+                  final result = database.select(sql_new);
+                  setState(() {
+                    dataList = result;
+                    BuildTable();
+                  });
+                } else {
+                  sql_new = sql+' ORDER BY $tar ASC';
+                  final result = database.select(sql_new);
+                  setState(() {
+                    dataList = result;
+                    BuildTable();
+                  });
+                }
+              });
+            },
+          ));
       }
     }
     dataColumns.add(const DataColumn(label: Text('操作'),),);
@@ -74,6 +101,7 @@ class _ViewState extends State<ViewPage> {
       List<DataCell> cells = [];
       if(nameList[0]['state'] == 1){
         cells.add(DataCell(Text(list['time'].toString()),));
+        //dataListItem.add(list['time'].toString());
       }
       if(nameList[1]['state'] == 1){
         cells.add(DataCell(Text(list['longitude'].toString()),));
@@ -112,10 +140,10 @@ class _ViewState extends State<ViewPage> {
         onPressed: () {
           var time;
           time = list['time'];
-          sql = 'delete from water_data where time = \'$time\'';
-          database.execute(sql);
-          sql = 'SELECT * FROM water_data order BY time ASC';
-          final result = database.select(sql);
+          var sql_ = 'delete from water_data where time = \'$time\'';
+          database.execute(sql_);
+          sql_new = sql+' order BY time ASC';
+          final result = database.select(sql_new);
           setState(() {
             dataList = result;
             for (final row in result) {
@@ -132,6 +160,7 @@ class _ViewState extends State<ViewPage> {
       ),));
       dataRows.add(DataRow(cells: cells));
     }
+    //print(dataListItem);
     setState(() {});
   }
 
@@ -165,8 +194,9 @@ class _ViewState extends State<ViewPage> {
                   flex: 2,
                   child: ElevatedButton(
                     onPressed: () {
-                      sql = 'SELECT * FROM water_data WHERE time LIKE \'%$search%\' OR place LIKE \'%$search%\' ORDER BY time ASC';
-                      final result = database.select(sql);
+                      sql = 'SELECT * FROM water_data WHERE time LIKE \'%$search%\' OR place LIKE \'%$search%\'';
+                      sql_new = sql + ' ORDER BY time ASC';
+                      final result = database.select(sql_new);
                       setState(() {
                         dataList = result;
                         BuildTable();
@@ -250,8 +280,9 @@ class _ViewState extends State<ViewPage> {
                   flex: 2,
                   child: ElevatedButton(
                     onPressed: () {
-                      sql = 'SELECT * FROM water_data WHERE place = \'$place_value\' AND time BETWEEN \'$start_value\' AND \'$end_value\' ORDER BY time ASC';
-                      final result = database.select(sql);
+                      sql = 'SELECT * FROM water_data WHERE place = \'$place_value\' AND time BETWEEN \'$start_value\' AND \'$end_value\'';
+                      sql_new = sql+' ORDER BY time ASC';
+                      final result = database.select(sql_new);
                       setState(() {
                         dataList = result;
                         BuildTable();
@@ -271,7 +302,7 @@ class _ViewState extends State<ViewPage> {
                       });
                       exportExcel(dataList);
                     },
-                    child: Text('生成报告'),
+                    child: Text('导出EXCEL'),
                   ),
                 ),
                 SizedBox(width: 30.0),
@@ -279,18 +310,28 @@ class _ViewState extends State<ViewPage> {
             ),
             SizedBox(height: 20.0),
             Divider(),
-            DataTable(
-              columns: dataColumns,
-              rows: dataRows,
-            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columnSpacing:45,
+                  sortColumnIndex: _sortColumnIndex,
+                  sortAscending: _sortAscending,
+                  columns: dataColumns,
+                  rows: dataRows,
+                ),
+              ),
+            )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: '全部数据',
         onPressed: (){
-          sql = 'SELECT * FROM water_data order BY time ASC';
-          final result = database.select(sql);
+          sql = 'SELECT * FROM water_data';
+          sql_new = sql+' ORDER BY time ASC';
+          final result = database.select(sql_new);
           setState(() {
             dataList = result;
             for (final row in result) {
@@ -306,6 +347,47 @@ class _ViewState extends State<ViewPage> {
         child: Icon(Icons.align_horizontal_left),
       ),
     );
+  }
+  String exchangeData(var name){
+    switch ( name ) {
+      case '时间': {
+        return "time";
+      } break;
+      case "经度": {
+        return "longitude";
+      } break;
+      case '纬度': {
+        return "latitude";
+      } break;
+      case "地点": {
+        return "place";
+      } break;
+      case '温度(℃)': {
+        return "temperature";
+      } break;
+      case "PH值": {
+        return "PH";
+      } break;
+      case '电导率(S/m)': {
+        return "electrical";
+      } break;
+      case "溶解氧(mg/L)": {
+        return "O2";
+      } break;
+      case '浊度(NTU)': {
+        return "dirty";
+      } break;
+      case "叶绿素(μg/L)": {
+        return "green";
+      } break;
+      case "氨氮(mg/L)": {
+        return "NHN";
+      } break;
+      case "水中油(mg/L)": {
+        return "oil";
+      } break;
+    }
+    return "";
   }
 }
 
@@ -384,4 +466,5 @@ void exportExcel(List<Map<String, dynamic>> dataList) async {
   final XFile textFile =
   XFile.fromData(fileData, mimeType: mimeType, name: fileName);
   await textFile.saveTo(path);
+
 }

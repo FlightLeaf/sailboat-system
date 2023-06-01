@@ -37,7 +37,7 @@ class _SettingPage extends State<SettingPage>{
     if(color == '绿色'){
       return 2;
     }
-    if(color == '粉色'){
+    if(color == '橙色'){
       return 3;
     }
     return 0;
@@ -54,7 +54,7 @@ class _SettingPage extends State<SettingPage>{
       return '绿色';
     }
     if(color == 3){
-      return '粉色';
+      return '橙色';
     }
     return '蓝色';
   }
@@ -161,7 +161,7 @@ class _SettingPage extends State<SettingPage>{
                         });
                       },
                       items:
-                      <String>['蓝色', '浅蓝色','绿色','粉色'].map<DropdownMenuItem<String>>((String value) {
+                      <String>['蓝色', '浅蓝色','绿色','橙色'].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
