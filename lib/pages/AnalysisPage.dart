@@ -18,7 +18,7 @@ class AnalysisPageChild extends State<AnalysisPage> {
       appBar: AppBar(
         title: const Text('数据分析'),
       ),
-      body: const Center(),
+      body: Container(),
     );
   }
 }

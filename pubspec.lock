@@ -81,6 +81,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.5"
+  data_table_2:
+    dependency: "direct main"
+    description:
+      name: data_table_2
+      sha256: ac04091abae6d24b4bee7abc5077b06eae54160d662a8d655e8e43e51537ba82
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.5.0"
   device_info_plus:
     dependency: transitive
     description:
@@ -201,14 +209,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.5"
-  fl_chart:
-    dependency: "direct main"
-    description:
-      name: fl_chart
-      sha256: "48a1b69be9544e2b03d9a8e843affd89e43f3194c9248776222efcb4206bb1ec"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.62.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -621,6 +621,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.4"
+  web_socket_channel:
+    dependency: "direct main"
+    description:
+      name: web_socket_channel
+      sha256: d88238e5eac9a42bb43ca4e721edba3c08c6354d4a53063afaa568516217621b
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.4.0"
   win32:
     dependency: transitive
     description:
@@ -647,4 +655,4 @@ packages:
     version: "6.3.0"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.10.0"

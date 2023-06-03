@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:excel/excel.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:filepicker_windows/filepicker_windows.dart';
 import 'package:flutter/material.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
@@ -47,34 +46,34 @@ class _ViewState extends State<ViewPage> {
     for (var i = 0; i < nameList.length; i++) {
       String name = nameList[i]['name'];
       if(nameList[i]['state'] == 1){
-          dataColumns.add(DataColumn(
-            label: Text(name),
-            onSort: (columnIndex, ascending) {
-              setState(() {
-                _sortColumnIndex = columnIndex;
-                _sortAscending = ascending;
-                var tar = exchangeData(name);
-                if (ascending) {
-                  sql_new = sql+' ORDER BY $tar DESC';
-                  final result = database.select(sql_new);
-                  setState(() {
-                    dataList = result;
-                    BuildTable();
-                  });
-                } else {
-                  sql_new = sql+' ORDER BY $tar ASC';
-                  final result = database.select(sql_new);
-                  setState(() {
-                    dataList = result;
-                    BuildTable();
-                  });
-                }
-              });
-            },
-          ));
+        dataColumns.add(DataColumn(
+          label: Text(name),
+          onSort: (columnIndex, ascending) {
+            setState(() {
+              _sortColumnIndex = columnIndex;
+              _sortAscending = ascending;
+              var tar = exchangeData(name);
+              if (ascending) {
+                sql_new = sql+' ORDER BY $tar DESC';
+                final result = database.select(sql_new);
+                setState(() {
+                  dataList = result;
+                  BuildTable();
+                });
+              } else {
+                sql_new = sql+' ORDER BY $tar ASC';
+                final result = database.select(sql_new);
+                setState(() {
+                  dataList = result;
+                  BuildTable();
+                });
+              }
+            });
+          },
+        ));
       }
     }
-    dataColumns.add(const DataColumn(label: Text('操作'),),);
+    dataColumns.add(const DataColumn(label: Center(child: Text('',textAlign: TextAlign.center,),),numeric: true),);
     dataList = database.select('SELECT * FROM water_data');
     List<Map<String, dynamic>> placeList = database.select('SELECT DISTINCT place FROM water_data');
     for (var element in placeList) {
@@ -101,7 +100,6 @@ class _ViewState extends State<ViewPage> {
       List<DataCell> cells = [];
       if(nameList[0]['state'] == 1){
         cells.add(DataCell(Text(list['time'].toString()),));
-        //dataListItem.add(list['time'].toString());
       }
       if(nameList[1]['state'] == 1){
         cells.add(DataCell(Text(list['longitude'].toString()),));
@@ -110,7 +108,7 @@ class _ViewState extends State<ViewPage> {
         cells.add(DataCell(Text(list['latitude'].toString()),));
       }
       if(nameList[3]['state'] == 1){
-        cells.add(DataCell(Text(list['place'].toString()),));
+        cells.add(DataCell(Tooltip(message: '经度：'+list['longitude'].toString()+' 纬度：'+list['latitude'].toString(),child: Text(list['place'].toString()),)));
       }
       if(nameList[4]['state'] == 1){
         cells.add(DataCell(Text(list['temperature'].toString()),));
@@ -122,10 +120,10 @@ class _ViewState extends State<ViewPage> {
         cells.add(DataCell(Text(list['electrical'].toString()),));
       }
       if(nameList[7]['state'] == 1){
-        cells.add(DataCell(Text(list['O2'].toString()),));
+        cells.add(DataCell(Text(list['O2'].toString()),onTap: (){ print(list['time']); },));
       }
       if(nameList[8]['state'] == 1){
-        cells.add(DataCell(Text(list['dirty'].toString()),));
+        cells.add(DataCell(Tooltip(message: '',child: Text(list['dirty'].toString()),)));
       }
       if(nameList[9]['state'] == 1){
         cells.add(DataCell(Text(list['green'].toString()),));
@@ -134,33 +132,65 @@ class _ViewState extends State<ViewPage> {
         cells.add(DataCell(Text(list['NHN'].toString()),));
       }
       if(nameList[11]['state'] == 1){
-        cells.add(DataCell(Text(list['oil'].toString()),));
+        cells.add(DataCell(Text(list['oil'].toString(),textAlign: TextAlign.center,),));
       }
-      cells.add(DataCell(IconButton(
-        onPressed: () {
-          var time;
-          time = list['time'];
-          var sql_ = 'delete from water_data where time = \'$time\'';
-          database.execute(sql_);
-          sql_new = sql+' order BY time ASC';
-          final result = database.select(sql_new);
-          setState(() {
-            dataList = result;
-            for (final row in result) {
-              Map<String, dynamic> record = {};
-              record.clear();
-              for (var columnName in row.keys) {
-                record[columnName] = row[columnName];
-              }
-            }
-            BuildTable();
-          });
-        },
-        icon:Icon(Icons.delete_forever),
-      ),));
-      dataRows.add(DataRow(cells: cells));
+      cells.add(DataCell(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              tooltip: '删除信息',
+              onPressed: () {
+                var time;
+                time = list['time'];
+                var sql_ = 'delete from water_data where time = \'$time\'';
+                database.execute(sql_);
+                sql_new = sql+' order BY time ASC';
+                final result = database.select(sql_new);
+                setState(() {
+                  dataList = result;
+                  for (final row in result) {
+                    Map<String, dynamic> record = {};
+                    record.clear();
+                    for (var columnName in row.keys) {
+                      record[columnName] = row[columnName];
+                    }
+                  }
+                  BuildTable();
+                });
+              },
+              icon:Icon(Icons.delete_forever),
+            ),
+            IconButton(
+              tooltip: '详细信息',
+              onPressed: () {
+                var time;
+                time = list['time'];
+                var sql_ = 'delete from water_data where time = \'$time\'';
+                database.execute(sql_);
+                sql_new = sql+' order BY time ASC';
+                final result = database.select(sql_new);
+                setState(() {
+                  dataList = result;
+                  for (final row in result) {
+                    Map<String, dynamic> record = {};
+                    record.clear();
+                    for (var columnName in row.keys) {
+                      record[columnName] = row[columnName];
+                    }
+                  }
+                  BuildTable();
+                });
+              },
+              icon:Icon(Icons.message),
+            ),
+          ],
+        )
+        ));
+      dataRows.add(DataRow(
+        cells: cells,
+      ));
     }
-    //print(dataListItem);
     setState(() {});
   }
 
@@ -171,6 +201,7 @@ class _ViewState extends State<ViewPage> {
         title: Text('数据查看'),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children:[
             Row(
@@ -320,9 +351,10 @@ class _ViewState extends State<ViewPage> {
                   sortAscending: _sortAscending,
                   columns: dataColumns,
                   rows: dataRows,
+                  //columnAlignment: WrapAlignment.center,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
