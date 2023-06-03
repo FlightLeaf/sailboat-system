@@ -34,6 +34,7 @@ class WaterData {
   double green;
   double nhn;
   double oil;
+  String target;
   bool selected;
 
   WaterData({
@@ -49,6 +50,7 @@ class WaterData {
     required this.green,
     required this.nhn,
     required this.oil,
+    required this.target,
     this.selected = false
   });
 
@@ -65,6 +67,7 @@ class WaterData {
     green: json["green"],
     nhn: json["NHN"],
     oil: json["oil"],
+    target: json["target"],
     //selected: json["select"],
   );
 
@@ -81,6 +84,7 @@ class WaterData {
     "green": green,
     "NHN": nhn,
     "oil": oil,
+    "target": target,
     "selected":selected,
   };
 
@@ -97,6 +101,7 @@ class WaterData {
     {'green': green},
     {'NHN': nhn},
     {'oil': oil},
+    {'target': target},
     {'selected': selected},
   ];
 }

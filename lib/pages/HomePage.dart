@@ -7,6 +7,7 @@ import 'package:sailboatsystem/pages/PlacePage.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../service/util.dart';
 import 'AnalysisPage.dart';
 import 'HelpPage.dart';
 import 'SettingPage.dart';
@@ -344,47 +345,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.sailing,color: Colors.white,),
       ),
     );
-  }
-  String exchangeData(var name){
-    switch ( name ) {
-      case '时间': {
-        return "time";
-      }
-      case "经度": {
-        return "longitude";
-      }
-      case '纬度': {
-        return "latitude";
-      }
-      case "地点": {
-        return "place";
-      }
-      case '温度(℃)': {
-        return "temperature";
-      }
-      case "PH值": {
-        return "PH";
-      }
-      case '电导率(S/m)': {
-        return "electrical";
-      }
-      case "溶解氧(mg/L)": {
-        return "O2";
-      }
-      case '浊度(NTU)': {
-        return "dirty";
-      }
-      case "叶绿素(μg/L)": {
-        return "green";
-      }
-      case "氨氮(mg/L)": {
-        return "NHN";
-      }
-      case "水中油(mg/L)": {
-        return "oil";
-      }
-    }
-    return "";
   }
 }
 class ChartData {

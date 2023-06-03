@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 import '../main.dart';
+import '../service/util.dart';
 
 class SettingPage extends StatefulWidget{
   @override
@@ -338,45 +339,5 @@ class _SettingPage extends State<SettingPage>{
         )
     );
   }
-  String exchangeData(var name){
-    switch ( name ) {
-      case '时间': {
-        return "time";
-      } break;
-      case "经度": {
-        return "longitude";
-      } break;
-      case '纬度': {
-        return "latitude";
-      } break;
-      case "地点": {
-        return "place";
-      } break;
-      case '温度(℃)': {
-        return "temperature";
-      } break;
-      case "PH值": {
-        return "PH";
-      } break;
-      case '电导率(S/m)': {
-        return "electrical";
-      } break;
-      case "溶解氧(mg/L)": {
-        return "O2";
-      } break;
-      case '浊度(NTU)': {
-        return "dirty";
-      } break;
-      case "叶绿素(μg/L)": {
-        return "green";
-      } break;
-      case "氨氮(mg/L)": {
-        return "NHN";
-      } break;
-      case "水中油(mg/L)": {
-        return "oil";
-      } break;
-    }
-    return "";
-  }
+
 }

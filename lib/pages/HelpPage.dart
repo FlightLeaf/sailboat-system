@@ -97,7 +97,7 @@ class ChartData {
   });
   factory ChartData.fromJson(Map<String, dynamic> json) => ChartData(
     time: json["time"],
-    data: json["dirty"] as double,
+    data: double.parse(json["dirty"].toString()),
     //selected: json["select"],
   );
 }

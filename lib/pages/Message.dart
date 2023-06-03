@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sailboatsystem/service/analysis.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
+
+import '../service/util.dart';
 
 class MessagePage extends StatefulWidget {
   final String time;
@@ -28,16 +31,35 @@ class MessagePageChild extends State<MessagePage> {
     for (var i = 0; i < nameList.length; i++) {
       String name = nameList[i]['name'];
       var name_temp = exchangeData(name);
-
       var temp = data[0]['$name_temp'];
-      rows_.add(
-        DataRow(
-            cells: [
-              DataCell(Text('$name')),
-              DataCell(Text('$temp')),
-            ]
-        ),
-      );
+      if(nameList[i]['special'] == 1){
+        rows_.add(
+          DataRow(
+              cells: [
+                DataCell(Text('$name')),
+                DataCell(Text('$temp',
+                  style: TextStyle(
+                    color: colorResult(
+                      double.parse(temp.toString()),
+                      exchangeData(name).toString(),
+                      data[0]['target'].toString(),
+                    ),
+                  ),
+                )),
+              ]
+          ),
+        );
+      }
+      else{
+        rows_.add(
+          DataRow(
+              cells: [
+                DataCell(Text('$name')),
+                DataCell(Text('$temp',)),
+              ]
+          ),
+        );
+      }
     }
   }
   @override
@@ -69,7 +91,7 @@ class MessagePageChild extends State<MessagePage> {
                     onPressed: () {
 
                     },
-                    icon: Icon(Icons.table_view),
+                    icon: Icon(Icons.table_chart),
                     label: Text('导出表格'),
                   ),
                   SizedBox(height: 15,),
@@ -77,7 +99,7 @@ class MessagePageChild extends State<MessagePage> {
                     onPressed: () {
 
                     },
-                    icon: Icon(Icons.newspaper),
+                    icon: Icon(Icons.document_scanner_rounded),
                     label: Text('导出报告'),
                   ),
                 ],
@@ -117,47 +139,6 @@ class MessagePageChild extends State<MessagePage> {
         ],
       ),
     );
-  }
-  String exchangeData(var name){
-    switch ( name ) {
-      case '时间': {
-        return "time";
-      } break;
-      case "经度": {
-        return "longitude";
-      } break;
-      case '纬度': {
-        return "latitude";
-      } break;
-      case "地址": {
-        return "place";
-      } break;
-      case '温度(℃)': {
-        return "temperature";
-      } break;
-      case "PH值": {
-        return "PH";
-      } break;
-      case '电导率(S/m)': {
-        return "electrical";
-      } break;
-      case "溶解氧(mg/L)": {
-        return "O2";
-      } break;
-      case '浊度(NTU)': {
-        return "dirty";
-      } break;
-      case "叶绿素(μg/L)": {
-        return "green";
-      } break;
-      case "氨氮(mg/L)": {
-        return "NHN";
-      } break;
-      case "水中油(mg/L)": {
-        return "oil";
-      } break;
-    }
-    return "";
   }
 }
 
