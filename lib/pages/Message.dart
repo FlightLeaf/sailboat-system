@@ -62,6 +62,8 @@ class MessagePageChild extends State<MessagePage> {
       }
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +76,17 @@ class MessagePageChild extends State<MessagePage> {
             width: 10,
           ),
           Expanded(
+              flex: 6,
+              child: Column(
+                children: [
+
+                ],
+              )
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
               flex: 2,
               child: Column(
                 children: [
@@ -81,7 +94,9 @@ class MessagePageChild extends State<MessagePage> {
                   SizedBox(height: 15,),
                   ElevatedButton.icon(
                     onPressed: () {
-
+                      var sql_ = 'delete from water_data where time = \'$time\'';
+                      database.execute(sql_);
+                      Navigator.pop(context,true);
                     },
                     icon: Icon(Icons.delete),
                     label: Text('删除数据'),
@@ -109,7 +124,7 @@ class MessagePageChild extends State<MessagePage> {
             width: 10,
           ),
           Expanded(
-            flex: 3,
+            flex: 4,
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
@@ -124,17 +139,6 @@ class MessagePageChild extends State<MessagePage> {
                 rows:rows_,
               ),
             ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-              flex: 6,
-              child: Column(
-                children: [
-
-                ],
-              )
           ),
         ],
       ),

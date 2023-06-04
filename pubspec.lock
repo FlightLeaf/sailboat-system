@@ -129,6 +129,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.2"
+  ffloat_nullsafety:
+    dependency: "direct main"
+    description:
+      name: ffloat_nullsafety
+      sha256: a5db61396f2217b49185adc2c72b3a5265a7c963f36a8265cf0dc901e714e011
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.3.6"
   file:
     dependency: transitive
     description:
@@ -655,4 +663,4 @@ packages:
     version: "6.3.0"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.7.0"

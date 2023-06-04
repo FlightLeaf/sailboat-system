@@ -100,13 +100,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(child: Row(
             children: [
               const SizedBox(width: 30.0),
-              const Expanded(
-                flex: 1,
-                child: Text('选择地址',),
-              ),
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: DropdownButton<String>(
+                  hint: Text('选择地址',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: placeValue,
                   onChanged: (String? newValue) {
@@ -124,13 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(width: 5.0),
-              const Expanded(
-                flex: 1,
-                child: Text('测量项目',),
-              ),
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
+                  hint: Text('测量项目',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: dataValue,
                   onChanged: (String? newValue) {
@@ -149,13 +143,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(width: 5.0),
-              const Expanded(
-                flex: 1,
-                child: Text('开始时间',),
-              ),
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
+                  hint: Text('开始时间',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: startValue,
                   onChanged: (String? newValue) {
@@ -174,13 +165,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(width: 5.0),
-              const Expanded(
-                flex: 1,
-                child: Text('结束时间',),
-              ),
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
+                  hint: Text('结束时间',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: endValue,
                   onChanged: (String? newValue){
@@ -197,9 +185,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   }).toList(),
                 ),
               ),
+              const SizedBox(width: 5.0),
               Expanded(
                 flex: 1,
-                child: TextButton(
+                child: TextButton.icon(
                   onPressed: () {
                     _databaseTools(dataValue!, placeValue!, startValue!, endValue!);
                     setState(() {
@@ -209,7 +198,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  child: const Text('查 询',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
+                  icon: Icon(Icons.search,color: Colors.white,),
+                  label: const Text('查 询',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
                 ),
               ),
               const SizedBox(width: 30.0),

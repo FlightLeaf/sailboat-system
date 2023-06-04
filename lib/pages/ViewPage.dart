@@ -96,54 +96,25 @@ class _ViewState extends State<ViewPage> {
 
   @override
   void dispose() {
-    // 在组件关闭时释放数据库资源
     database.dispose();
     super.dispose();
   }
   void BuildTable() {
     dataRows.clear();
-
     for(final list in dataList){
       List<DataCell> cells = [];
-      WaterData waterData = WaterData.fromJson(list);
-      if(nameList[0]['state'] == 1){
-        cells.add(DataCell(Text(waterData.time.toString(),style: TextStyle(),),));
-      }
-      if(nameList[1]['state'] == 1){
-        cells.add(DataCell(Text(waterData.longitude.toString()),));
-      }
-      if(nameList[2]['state'] == 1){
-        cells.add(DataCell(Text(waterData.latitude.toString()),));
-      }
-      if(nameList[3]['state'] == 1){
-        cells.add(DataCell(Tooltip(message: '经度：'+waterData.longitude.toString()+' 纬度：'+list['latitude'].toString(),child: Text(list['place'].toString()),)));
-      }
-      if(nameList[4]['state'] == 1){
-        cells.add(DataCell(Text(waterData.temperature.toString()),));
-      }
-      if(nameList[5]['state'] == 1){
-        cells.add(DataCell(Text(waterData.ph.toString(),style: TextStyle(color: colorResult(waterData.ph, "PH", "海水")),),));
-      }
-      if(nameList[6]['state'] == 1){
-        cells.add(DataCell(Text(waterData.electrical.toString()),));
-      }
-      if(nameList[7]['state'] == 1){
-        cells.add(DataCell(Text(waterData.o2.toString()),onTap: (){ print(list['time']); },));
-      }
-      if(nameList[8]['state'] == 1){
-        cells.add(DataCell(Tooltip(message: '',child: Text(waterData.dirty.toString()),)));
-      }
-      if(nameList[9]['state'] == 1){
-        cells.add(DataCell(Text(waterData.green.toString()),));
-      }
-      if(nameList[10]['state'] == 1){
-        cells.add(DataCell(Text(waterData.nhn.toString()),));
-      }
-      if(nameList[11]['state'] == 1){
-        cells.add(DataCell(Text(waterData.oil.toString(),textAlign: TextAlign.center,),));
-      }
-      if(nameList[12]['state'] == 1){
-        cells.add(DataCell(Text(waterData.target.toString(),textAlign: TextAlign.center,),));
+      for(var name in nameList){
+        if(name['state'] == 1){
+          if(name['value'].toString() == 'place'&&name['special'] == 2) {
+            cells.add(DataCell(Tooltip(message: '经度：'+list['latitude'].toString()+' 纬度：'+list['latitude'].toString(),child: Text(list['place'].toString()),)));
+          }
+          else if(name['special'] == 1){
+            cells.add(DataCell(Text(list[name['value'].toString()].toString(),style: TextStyle(color: colorResult(double.parse(list[name['value']].toString()), name['value'].toString(), list['target'])),),),);
+          }
+          else if(name['special'] == 2){
+            cells.add(DataCell(Text(list[name['value'].toString()].toString(),)),);
+          }
+        }
       }
       cells.add(DataCell(
           Row(
@@ -175,7 +146,8 @@ class _ViewState extends State<ViewPage> {
               IconButton(
                 tooltip: '详细信息',
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MessagePage(time: list['time'].toString())));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MessagePage(time: list['time'].toString())))
+                  .then((val) => val?_getRequests():null);
                   setState(() {
                   });
                 },
@@ -185,10 +157,18 @@ class _ViewState extends State<ViewPage> {
           )
       ));
       dataRows.add(DataRow(
-          cells: cells,
+        cells: cells,
       ));
     }
     setState(() {});
+  }
+
+  _getRequests() async{
+    final result = database.select(sql_new);
+    setState(() {
+      dataList = result;
+      BuildTable();
+    });
   }
 
   @override
@@ -237,12 +217,9 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 2,
-                  child: Text('选择地址',),
-                ),
-                Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: DropdownButton<String>(
+                    hint: Text('选择地址',),
                     focusColor: Colors.white.withOpacity(0.0),
                     value: place_value,
                     onChanged: (String? newValue) {
@@ -261,12 +238,9 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 2,
-                  child: Text('开始时间',),
-                ),
-                Expanded(
                   flex: 5,
                   child: DropdownButton<String>(
+                    hint: Text('开始时间',),
                     focusColor: Colors.white.withOpacity(0.0),
                     value: start_value,
                     onChanged: (String? newValue) {
@@ -284,12 +258,9 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 5.0),
                 Expanded(
-                  flex: 2,
-                  child: Text('结束时间',),
-                ),
-                Expanded(
                   flex: 5,
                   child: DropdownButton<String>(
+                    hint: Text('结束时间',),
                     focusColor: Colors.white.withOpacity(0.0),
                     value: end_value,
                     onChanged: (String? newValue) {
@@ -307,8 +278,8 @@ class _ViewState extends State<ViewPage> {
                 ),
                 SizedBox(width: 12.0),
                 Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
+                  flex: 3,
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       sql = 'SELECT * FROM water_data WHERE place = \'$place_value\' AND time BETWEEN \'$start_value\' AND \'$end_value\'';
                       sql_new = sql+' ORDER BY time ASC';
@@ -318,21 +289,23 @@ class _ViewState extends State<ViewPage> {
                         BuildTable();
                       });
                     },
-                    child: Text('查询'),
+                    icon: Icon(Icons.search),
+                    label: Text('查询'),
                   ),
                 ),
                 SizedBox(width: 12.0),
                 Expanded(
                   flex: 3,
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: (){
-                      final result = database.select(sql);
+                      final result = database.select(sql_new);
                       setState(() {
                         dataList = result;
                       });
                       exportExcel(dataList);
                     },
-                    child: Text('导出EXCEL'),
+                    icon: Icon(Icons.table_chart),
+                    label: Text('导出'),
                   ),
                 ),
                 SizedBox(width: 30.0),
