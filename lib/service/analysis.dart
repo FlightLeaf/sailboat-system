@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -28,7 +27,7 @@ Color colorResult(double data,String name,String target){
             return Colors.yellow;
           }
           else{
-            return Colors.red;
+            return Colors.red.shade900;
           }
         }
         case "渔业" :{
@@ -55,7 +54,21 @@ Color colorResult(double data,String name,String target){
     case "O2": {
       switch( target ){
         case "海水" :{
-
+          if(data>=3&&data<4){
+            return Colors.red.shade50;
+          }
+          else if(data>=4&&data<5){
+            return Colors.yellowAccent.shade100;
+          }
+          else if(data>=5&&data<6){
+            return Colors.yellow;
+          }
+          else if(data>6){
+            return Colors.green;
+          }
+          else{
+            return Colors.red.shade900;
+          }
         }
         case "渔业" :{
 
@@ -118,5 +131,5 @@ Color colorResult(double data,String name,String target){
       }
     }
   }
-  return Colors.black;
+  return Colors.blue;
 }

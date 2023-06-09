@@ -18,7 +18,7 @@ class ViewPage extends StatefulWidget {
 }
 
 class _ViewState extends State<ViewPage> {
-  var sql,search,sql_new;
+  var sql,search,sql_new,sql_delete;
 
   late sqlite.Database database;
 
@@ -123,23 +123,10 @@ class _ViewState extends State<ViewPage> {
               IconButton(
                 tooltip: '删除信息',
                 onPressed: () {
+                  YYAlertDialogWithDivider(context);
                   var time;
                   time = list['time'];
-                  var sql_ = 'delete from water_data where time = \'$time\'';
-                  database.execute(sql_);
-                  sql_new = sql+' order BY time ASC';
-                  final result = database.select(sql_new);
-                  setState(() {
-                    dataList = result;
-                    for (final row in result) {
-                      Map<String, dynamic> record = {};
-                      record.clear();
-                      for (var columnName in row.keys) {
-                        record[columnName] = row[columnName];
-                      }
-                    }
-                    BuildTable();
-                  });
+                  sql_delete = 'delete from water_data where time = \'$time\'';
                 },
                 icon:Icon(Icons.delete_forever),
               ),
@@ -147,7 +134,7 @@ class _ViewState extends State<ViewPage> {
                 tooltip: '详细信息',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MessagePage(time: list['time'].toString())))
-                  .then((val) => val?_getRequests():null);
+                      .then((val) => val?_getRequests():null);
                   setState(() {
                   });
                 },
@@ -161,6 +148,52 @@ class _ViewState extends State<ViewPage> {
       ));
     }
     setState(() {});
+  }
+
+  YYDialog YYAlertDialogWithDivider(BuildContext context) {
+    return YYDialog().build(context)
+      ..width = 180
+      ..borderRadius = 4.0
+      ..text(
+        padding: EdgeInsets.all(25.0),
+        alignment: Alignment.center,
+        text: "是否确认删除？",
+        color: Colors.black,
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
+      )
+      ..divider()
+      ..doubleButton(
+        padding: EdgeInsets.only(top: 10.0),
+        gravity: Gravity.center,
+        withDivider: true,
+        text1: "取消",
+        color1: Colors.blue,
+        fontSize1: 14.0,
+        onTap1: () {
+          sql_delete = null;
+        },
+        text2: "确定",
+        color2: Colors.blue,
+        fontSize2: 14.0,
+        onTap2: () {
+          database.execute(sql_delete);
+          sql_new = sql+' order BY time ASC';
+          final result = database.select(sql_new);
+          setState(() {
+            dataList = result;
+            for (final row in result) {
+              Map<String, dynamic> record = {};
+              record.clear();
+              for (var columnName in row.keys) {
+                record[columnName] = row[columnName];
+              }
+            }
+            BuildTable();
+          });
+        },
+      )
+      ..show();
   }
 
   _getRequests() async{

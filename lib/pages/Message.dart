@@ -14,6 +14,7 @@ class MessagePage extends StatefulWidget {
 
 class MessagePageChild extends State<MessagePage> {
   final String time;
+  var sql_delete;
   MessagePageChild({required this.time});
   late sqlite.Database database;
   List<Map<String, dynamic>> nameList = [];
@@ -62,8 +63,6 @@ class MessagePageChild extends State<MessagePage> {
       }
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +78,11 @@ class MessagePageChild extends State<MessagePage> {
               flex: 6,
               child: Column(
                 children: [
-
+                  Column(
+                    children: [
+                      Container(),
+                    ],
+                  )
                 ],
               )
           ),
@@ -94,8 +97,8 @@ class MessagePageChild extends State<MessagePage> {
                   SizedBox(height: 15,),
                   ElevatedButton.icon(
                     onPressed: () {
-                      var sql_ = 'delete from water_data where time = \'$time\'';
-                      database.execute(sql_);
+                      sql_delete = 'delete from water_data where time = \'$time\'';
+                      database.execute(sql_delete);
                       Navigator.pop(context,true);
                     },
                     icon: Icon(Icons.delete),

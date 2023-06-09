@@ -23,10 +23,8 @@ class _SettingPage extends State<SettingPage>{
   bool? NHN_isSelected = false;
   bool? oil_isSelected = false;
 
-  bool switchValue = true;
   String? color_value;
   var color_no;
-
 
   int colorExchange(var color){
     if(color == '蓝色'){
@@ -69,7 +67,7 @@ class _SettingPage extends State<SettingPage>{
     List<Map<String, dynamic>> theme = [];
     List<Map<String, dynamic>> select = [];
     theme = database.select('SELECT theme FROM Settings');
-    select = database.select('SELECT * FROM dataState');
+    select = database.select('SELECT * FROM dataState where special = 1');
     color_value = Exchangecolor(theme[0]['Theme']);
     for(int i = 0;i<select.length;i++){
       switch(exchangeData(select[i]['name'])){
@@ -108,7 +106,6 @@ class _SettingPage extends State<SettingPage>{
       }
     }
   }
-
   void ThemeSet(String value){
     color_no = colorExchange(value);
     database.execute('update Settings SET Theme = '+color_no.toString()+' WHERE NO = 1');
@@ -134,6 +131,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                     title: Text('夜间模式'),
                     trailing: Switch(
+                      activeColor: Theme.of(context).primaryColor,
                       value: themeProvider.isDarkMode,
                       onChanged: (value) {
                         themeProvider.setTheme(value);
@@ -188,7 +186,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                     title: Text('温度'),
                     trailing: Checkbox(
-                      activeColor: Colors.blue, // 设置复选框激活时的颜色
+                      activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                       checkColor: Colors.white, // 设置勾选标记的颜色
                       value: temp_isSelected,
                       onChanged: (newValue) {
@@ -206,7 +204,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('PH值'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor:Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: ph_isSelected,
                         onChanged: (newValue) {
@@ -224,7 +222,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('电导率'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: ele_isSelected,
                         onChanged: (newValue) {
@@ -242,7 +240,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('溶解氧'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: O2_isSelected,
                         onChanged: (newValue) {
@@ -260,7 +258,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('浊度'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: dirty_isSelected,
                         onChanged: (newValue) {
@@ -278,7 +276,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('叶绿素'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: green_isSelected,
                         onChanged: (newValue) {
@@ -296,7 +294,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('氨氮'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: NHN_isSelected,
                         onChanged: (newValue) {
@@ -314,7 +312,7 @@ class _SettingPage extends State<SettingPage>{
                   ListTile(
                       title: Text('水中油'),
                       trailing: Checkbox(
-                        activeColor: Colors.blue, // 设置复选框激活时的颜色
+                        activeColor: Theme.of(context).primaryColor, // 设置复选框激活时的颜色
                         checkColor: Colors.white, // 设置勾选标记的颜色
                         value: oil_isSelected,
                         onChanged: (newValue) {
@@ -329,6 +327,7 @@ class _SettingPage extends State<SettingPage>{
                         },
                       )
                   ),
+
                   Divider(),
                   Text('注意：数据图表页面需重启方能生效',style: TextStyle(fontSize: 12),)
                 ],
@@ -339,5 +338,10 @@ class _SettingPage extends State<SettingPage>{
         )
     );
   }
+}
 
+class SettingData {
+  final String name;
+  bool? selected;
+  SettingData(this.name,this.selected);
 }

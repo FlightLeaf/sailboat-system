@@ -41,7 +41,6 @@ dependencies:
   filepicker_windows:
   web_socket_channel:
   flutter_custom_dialog:
-  ffloat_nullsafety:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

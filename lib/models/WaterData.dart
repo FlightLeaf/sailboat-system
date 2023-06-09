@@ -1,20 +1,5 @@
 import 'dart:convert';
-/// O2 : 15.6
-/// PH : 7.35
-/// NHN : 15.2
-/// oil : 15.6
-/// time : "2023-03-24"
-/// dirty : 12.6
-/// green : 19.3
-/// place : "Qingdao"
-/// latitude : "37"
-/// longitude : "34"
-/// electrical : 7.1
-/// temperature : 15.27272727
 
-// To parse this JSON data, do
-//
-//     final waterData = waterDataFromJson(jsonString);
 
 WaterData waterDataFromJson(String str) => WaterData.fromJson(json.decode(str));
 
@@ -68,7 +53,6 @@ class WaterData {
     nhn: json["NHN"],
     oil: json["oil"],
     target: json["target"],
-    //selected: json["select"],
   );
 
   Map<String, dynamic> toJson() => {
