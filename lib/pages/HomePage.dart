@@ -226,8 +226,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         LineSeries<ChartData, String>(
                           name: name,
                           dataSource:  chartList,
-                          xValueMapper: (ChartData sales, _) => sales.time,
-                          yValueMapper: (ChartData sales, _) => sales.data,
+                          xValueMapper: (ChartData chartData, _) => chartData.time,
+                          yValueMapper: (ChartData chartData, _) => chartData.data,
                           dataLabelSettings: const DataLabelSettings(isVisible: true),
                           color: Colors.blue,
                           width:3,

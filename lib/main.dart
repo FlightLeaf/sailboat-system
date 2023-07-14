@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> theme = [];
+
     sqlite.Database database;
     database = sqlite.sqlite3.open('sailboat.sqlite');
     theme = database.select('SELECT * FROM Settings');

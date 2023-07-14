@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sailboatsystem/service/analysis.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../service/util.dart';
 
@@ -78,11 +79,12 @@ class MessagePageChild extends State<MessagePage> {
               flex: 6,
               child: Column(
                 children: [
-                  Column(
-                    children: [
-                      Container(),
-                    ],
-                  )
+                  Container(
+
+                  ),
+                  Container(
+
+                  ),
                 ],
               )
           ),
