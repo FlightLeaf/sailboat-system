@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:excel/excel.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
-
+/*
+ * TODO 数据库替换 SQLite=>MySQL
+ * */
 String exchangeData(var name){
   late sqlite.Database database;
   database = sqlite.sqlite3.open('sailboat.sqlite');

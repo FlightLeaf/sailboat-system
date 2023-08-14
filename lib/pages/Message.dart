@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sailboatsystem/service/analysis.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../service/util.dart';
 
@@ -12,7 +11,9 @@ class MessagePage extends StatefulWidget {
   @override
   MessagePageChild  createState() =>  MessagePageChild (time: time);
 }
-
+/*
+ * TODO 数据库替换 SQLite=>MySQL
+ * */
 class MessagePageChild extends State<MessagePage> {
   final String time;
   var sql_delete;

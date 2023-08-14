@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PlacePage extends StatefulWidget {
+  const PlacePage({super.key});
   @override
   QualityStandards  createState() =>  QualityStandards();
 }

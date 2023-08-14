@@ -9,7 +9,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../service/util.dart';
 import 'AnalysisPage.dart';
-import 'HelpPage.dart';
 import 'SettingPage.dart';
 import 'ViewPage.dart';
 import 'WordPage.dart';
@@ -314,13 +313,6 @@ class _MyHomePageState extends State<MyHomePage> {
               title: const Text('系统设置'),
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('帮助'),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HelpPage()));
               },
             ),
           ],

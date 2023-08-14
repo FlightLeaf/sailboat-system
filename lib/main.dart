@@ -8,7 +8,9 @@ import 'models/ThemeColor.dart';
 void main() {
   runApp(MyApp());
 }
-
+/*
+ * TODO 数据库替换 SQLite=>MySQL
+ * */
 int colorNum = 0;
 bool dark_light = false;
 

@@ -1,10 +1,5 @@
-
-import 'dart:typed_data';
-import 'package:excel/excel.dart';
-import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_dialog/flutter_custom_dialog.dart';
-import 'package:sailboatsystem/models/WaterData.dart';
 import 'package:sailboatsystem/pages/Message.dart';
 import 'package:sailboatsystem/service/analysis.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
@@ -16,7 +11,9 @@ class ViewPage extends StatefulWidget {
   @override
   _ViewState createState() => _ViewState();
 }
-
+/*
+ * TODO 数据库替换 SQLite=>MySQL
+ * */
 class _ViewState extends State<ViewPage> {
   var sql,search,sql_new,sql_delete;
 

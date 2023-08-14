@@ -10,8 +10,9 @@ class SettingPage extends StatefulWidget{
   @override
   _SettingPage createState() => _SettingPage();
 }
-
-
+/*
+ * TODO 数据库替换 SQLite=>MySQL
+ * */
 class _SettingPage extends State<SettingPage>{
 
   bool? temp_isSelected = false;
