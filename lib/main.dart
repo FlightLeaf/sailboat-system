@@ -6,16 +6,16 @@ import 'package:provider/provider.dart';
 import 'models/ThemeColor.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 /*
  * TODO 数据库替换 SQLite=>MySQL
  * */
 int colorNum = 0;
-bool dark_light = false;
+bool darkLight = false;
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
     theme = database.select('SELECT * FROM Settings');
     colorNum = theme[0]['Theme'];
     if(theme[0]['dark_light'].toString() == '0') {
-      dark_light = false;
+      darkLight = false;
     } else {
-      dark_light = true;
+      darkLight = true;
     }
     database.dispose();
     return ChangeNotifierProvider(
@@ -45,8 +45,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData themeData = dark_light ? darkTheme : lightTheme;
-  bool isDarkMode = dark_light;
+  ThemeData themeData = darkLight ? darkTheme : lightTheme;
+  bool isDarkMode = darkLight;
   int _colorNum = 0;
 
   ThemeData getTheme() => themeData;

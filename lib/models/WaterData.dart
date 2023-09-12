@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 WaterData waterDataFromJson(String str) => WaterData.fromJson(json.decode(str));
 
 String waterDataToJson(WaterData data) => json.encode(data.toJson());

@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:sailboatsystem/pages/FishPage.dart';
-import 'package:sailboatsystem/pages/OsPage.dart';
-import 'package:sailboatsystem/pages/PlacePage.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -102,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
-                  hint: Text('选择地址',),
+                  hint: const Text('选择地址',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: placeValue,
                   onChanged: (String? newValue) {
@@ -123,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
-                  hint: Text('测量项目',),
+                  hint: const Text('测量项目',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: dataValue,
                   onChanged: (String? newValue) {
@@ -145,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
-                  hint: Text('开始时间',),
+                  hint: const Text('开始时间',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: startValue,
                   onChanged: (String? newValue) {
@@ -167,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(
                 flex: 2,
                 child: DropdownButton<String>(
-                  hint: Text('结束时间',),
+                  hint: const Text('结束时间',),
                   focusColor: Colors.white.withOpacity(0.0),
                   value: endValue,
                   onChanged: (String? newValue){
@@ -197,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  icon: Icon(Icons.search,color: Colors.white,),
+                  icon: const Icon(Icons.search,color: Colors.white,),
                   label: const Text('查 询',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w700),),
                 ),
               ),
@@ -260,13 +257,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.area_chart_outlined),
-              title: const Text('数据图表'),
-              onTap:  () {
-                Navigator.of(context).pop(); // 关闭 drawer
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.table_chart),
               title: const Text('数据查看'),
               onTap: (){
@@ -287,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => WordPage()));
               },
             ),
-            ListTile(
+            /*ListTile(
               leading: const Icon(Icons.water),
               title: const Text('海水水质标准'),
               onTap: (){
@@ -307,10 +297,17 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FishPage()));
               },
-            ),
+            ),*/
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('系统设置'),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.question_mark),
+              title: const Text('关于'),
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
               },
