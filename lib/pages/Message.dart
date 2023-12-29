@@ -11,9 +11,7 @@ class MessagePage extends StatefulWidget {
   @override
   MessagePageChild  createState() =>  MessagePageChild (time: time);
 }
-/*
- * TODO 数据库替换 SQLite=>MySQL
- * */
+
 class MessagePageChild extends State<MessagePage> {
   final String time;
   var sql_delete;
@@ -41,13 +39,6 @@ class MessagePageChild extends State<MessagePage> {
               cells: [
                 DataCell(Text('$name')),
                 DataCell(Text('$temp',
-                  style: TextStyle(
-                    color: colorResult(
-                      double.parse(temp.toString()),
-                      exchangeData(name).toString(),
-                      data[0]['target'].toString(),
-                    ),
-                  ),
                 )),
               ]
           ),

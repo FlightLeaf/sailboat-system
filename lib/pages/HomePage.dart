@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:sailboatsystem/pages/AboutPage.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -8,7 +9,6 @@ import '../service/util.dart';
 import 'AnalysisPage.dart';
 import 'SettingPage.dart';
 import 'ViewPage.dart';
-import 'WordPage.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -270,13 +270,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AnalysisPage()));
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.document_scanner),
-              title: const Text('报告生成'),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WordPage()));
-              },
-            ),
             /*ListTile(
               leading: const Icon(Icons.water),
               title: const Text('海水水质标准'),
@@ -309,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: const Icon(Icons.question_mark),
               title: const Text('关于'),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SettingPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
               },
             ),
           ],

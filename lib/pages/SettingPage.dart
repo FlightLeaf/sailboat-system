@@ -10,9 +10,7 @@ class SettingPage extends StatefulWidget{
   @override
   _SettingPage createState() => _SettingPage();
 }
-/*
- * TODO 数据库替换 SQLite=>MySQL
- * */
+
 class _SettingPage extends State<SettingPage>{
 
   bool? temp_isSelected = false;
@@ -115,7 +113,6 @@ class _SettingPage extends State<SettingPage>{
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('系统设置'),
@@ -129,46 +126,6 @@ class _SettingPage extends State<SettingPage>{
               ListView(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 children: [
-                  ListTile(
-                    title: Text('夜间模式'),
-                    trailing: Switch(
-                      activeColor: Theme.of(context).primaryColor,
-                      value: themeProvider.isDarkMode,
-                      onChanged: (value) {
-                        themeProvider.setTheme(value);
-                        if(value){
-                          database.execute('update Settings SET dark_light = \'1\' WHERE NO = 1');
-                        }
-                        else{
-                          database.execute('update Settings SET dark_light = \'0\' WHERE NO = 1');
-                        }
-                      },
-                    ),
-                  ),
-                  Divider(),
-                  ListTile(
-                    title: const Text('主题颜色'),
-                    trailing:
-                    DropdownButton<String>(
-                      focusColor: Colors.white.withOpacity(0.0),
-                      value: color_value,
-                      onChanged: (String? newValue) {
-                        // 更新下拉框的值
-                        setState(() {
-                          color_value = newValue!;
-                          ThemeSet(color_value!);
-                          themeProvider.colorNum = colorExchange(color_value);
-                        });
-                      },
-                      items:
-                      <String>['蓝色', '浅蓝色','绿色','橙色'].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
                   Divider(),
                 ],
               ),

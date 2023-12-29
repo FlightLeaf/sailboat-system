@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class WordPage extends StatefulWidget {
+class AboutPage extends StatefulWidget {
   @override
-  WordPageChild  createState() =>  WordPageChild ();
+  AboutPageChild  createState() =>  AboutPageChild ();
 }
 
-class WordPageChild extends State<WordPage> {
+class AboutPageChild extends State<AboutPage> {
 
   @override
   void initState() {
@@ -16,7 +16,7 @@ class WordPageChild extends State<WordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('水质检测报告生成'),
+        title: Text('关于'),
       ),
       body: Container(
       ),

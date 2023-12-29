@@ -11,9 +11,7 @@ class ViewPage extends StatefulWidget {
   @override
   _ViewState createState() => _ViewState();
 }
-/*
- * TODO 数据库替换 SQLite=>MySQL
- * */
+
 class _ViewState extends State<ViewPage> {
   var sql,search,sql_new,sql_delete;
 
@@ -106,7 +104,7 @@ class _ViewState extends State<ViewPage> {
             cells.add(DataCell(Tooltip(message: '经度：'+list['latitude'].toString()+' 纬度：'+list['latitude'].toString(),child: Text(list['place'].toString()),)));
           }
           else if(name['special'] == 1){
-            cells.add(DataCell(Text(list[name['value'].toString()].toString(),style: TextStyle(color: colorResult(double.parse(list[name['value']].toString()), name['value'].toString(), list['target'])),),),);
+            cells.add(DataCell(Text(list[name['value'].toString()].toString(),),),);
           }
           else if(name['special'] == 2){
             cells.add(DataCell(Text(list[name['value'].toString()].toString(),)),);
