@@ -207,7 +207,6 @@ class _ViewState extends State<ViewPage> {
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-
         child: Column(
           children:[
             Row(
